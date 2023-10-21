@@ -16,9 +16,17 @@ pipeline {
                 sh 'npm install'
             }
         }
-        stage('Run tests') {
+        stage('Run Unit tests') {
             steps {
-                sh 'npm run test -- --watch=false --no-progress --browsers=ChromeHeadlessNoSandbox'
+                script {
+                  sh 'npm install'
+                  sh 'ng test --watch=false --browsers=ChromeHeadless'
+                }
+            }
+            post {
+                always {
+                  junit 'test-results/*.xml'
+                }
             }
         }
         stage('Build Docker image') {
