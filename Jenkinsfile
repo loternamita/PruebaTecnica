@@ -1,7 +1,12 @@
 pipeline {
+
+
     agent any
 
+    // Etapas
     stages {
+
+        // En esta parte se clona el repositorio en el servidor de jenkins
         stage('Clone repository') {
             steps {
                 git(
@@ -11,11 +16,15 @@ pipeline {
                   )
             }
         }
+        
+        // En esta parte se instala las dependencias
         stage('Install dependencies') {
             steps {
                 sh 'npm install'
             }
         }
+
+        // En esta parte se ejecutan pruebas unitarias en Jasmine y Karma
         stage('Run Unit tests') {
             steps {
                 script {
@@ -29,6 +38,8 @@ pipeline {
                 }
             }
         }
+
+        // En esta parte se dockeriza el proyecto
         stage('Build Docker image') {
             steps {
                 script {
