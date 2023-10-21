@@ -32,11 +32,6 @@ pipeline {
                   sh 'ng test --watch=false --browsers=ChromeHeadless'
                 }
             }
-            post {
-                always {
-                  junit 'test-results/test-results.xml'
-                }
-            }
         }
 
         // En esta parte se dockeriza el proyecto
