@@ -8,7 +8,9 @@ import { Component} from '@angular/core';
 })
 export class AppComponent {
 
+  valorNuevo = 'Hola mundooooo';
   mensajeBienvenida = '¡Bienvenido a mi aplicación Angular!';
   fechaActual = new Date();
+
 
 }
