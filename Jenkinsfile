@@ -17,7 +17,11 @@ pipeline {
         // Validar el pipeline
         stage('Checkout') {
             steps {
-                checkout scm
+                git(
+                      credentialsId: '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',
+                      url: 'https://github.com/loternamita/PruebaTecnica.git',
+                      branch: 'develop'
+                  )
             }
         }
 
