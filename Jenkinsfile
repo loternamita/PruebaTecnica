@@ -1,10 +1,22 @@
 pipeline {
 
-
     agent any
+
+    // Herramientas para poder ejecutar el archivo JenkinsFile
+    tools {
+        // Especifica la versión de sonar-scanner que se ha configurado en Jenkins
+        sonarQubeEnv 'sonarQubePruebaTecnica'
+    }
 
     // Etapas
     stages {
+
+        // Validar el pipeline
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
 
         // En esta parte se clona el repositorio en el servidor de jenkins
         stage('Clone repository') {
@@ -31,6 +43,32 @@ pipeline {
                   sh 'npm install'
                   sh 'ng test --watch=false --browsers=ChromeHeadless'
                 }
+            }
+        }
+
+        stage('SonarQube analysis') {
+            steps {
+                withSonarQubeEnv(sonarQubeEnv) {
+                    // Aquí va el comando para realizar el análisis de SonarQube.
+                    // Las propiedades de SonarQube se pasan mediante parámetros -D
+                    sh '''
+                        sonar-scanner \
+                            -Dsonar.projectKey=my-app \
+                            -Dsonar.sources=src \
+                            -Dsonar.exclusions=**/node_modules/** \
+                            -Dsonar.test.inclusions=**/*.spec.ts \
+                            -Dsonar.typescript.lcov.reportPaths=coverage/my-app/lcov.info \
+                            -Dsonar.host.url=http://localhost:9000 \
+                            -Dsonar.login=sqp_292289a50e9308062e41ca49d730de5885bbbbc0
+                    '''
+                }
+            }
+        }
+
+        stage('Wait for SonarQube to complete analysis') {
+            steps {
+                // Este paso espera a que SonarQube complete el análisis y devuelve el resultado
+                waitForQualityGate abortPipeline: true
             }
         }
 
