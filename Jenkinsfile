@@ -97,7 +97,7 @@ pipeline {
                     // Utilizar credenciales almacenadas para iniciar sesión en Docker Hub
                     withCredentials([usernamePassword(credentialsId: 'TokenDocker', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         // Iniciar sesión en Docker Hub
-                        sh "docker login -u loternamita -p $DOCKER_CERT_PATH"
+                        sh "docker login -u $DOCKER_USERNAME -p dckr_pat_OqLDQXHFhebCECdm-nbb3rtdKeI"
 
                         // Construir la imagen de Docker
                         sh "docker build -t loternamita/pruebatecnica:v${currentBuildNumber} ."
