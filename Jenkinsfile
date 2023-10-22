@@ -2,8 +2,17 @@ pipeline {
 
     agent any
 
+    tools {
+        // a bit ugly because there is no `@Symbol` annotation for the DockerTool
+        // see the discussion about this in PR 77 and PR 52:
+        // https://github.com/jenkinsci/docker-commons-plugin/pull/77#discussion_r280910822
+        // https://github.com/jenkinsci/docker-commons-plugin/pull/52
+        'org.jenkinsci.plugins.docker.commons.tools.DockerTool' '18.09'
+    }
+
     environment {
         SONAR_SCANNER_HOME = tool name: 'SonarQube Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+        DOCKER_CERT_PATH = credentials('TokenDocker')
     }
 
     // Etapas
@@ -72,24 +81,32 @@ pipeline {
             }
         }
 
-        // Construir la imagen usando Dockerfile en la carpeta actual
-        stage('Build Docker Image') {
+
+
+
+
+
+
+
+
+
+
+
+        stage('Build and Push Docker Image') {
             steps {
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'TokenDocker') {
-
-                        // Nombre de la imagen que deseas crear
-                        def dockerImageName = "loternamita/PruebaTecnica:1.0"
-
-                        // Construir la imagen y etiquetarla
-                        def customImage = docker.build(dockerImageName, '.')
-                        
-                        // Subir la imagen a Docker Hub
-                        customImage.push()
-                    }
-                }
+                // Ahora puedes utilizar Docker en tu pipeline.
+                // Asegúrate de construir y subir tu imagen aquí.
+                sh "docker build -t ."
+                sh "docker push"
             }
         }
+
+
+
+
+
+
+
 
 
     }
