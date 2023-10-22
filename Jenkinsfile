@@ -76,14 +76,8 @@ pipeline {
         stage('Build Docker image') {
             steps {
                 script {
-                    // Inicializa con la versión inicial
-                    def version = 'v1.0'
-
-                    // Aumenta la versión
-                    version = incrementVersion(version)
-
                     // Nombre de la imagen que deseas crear
-                    def dockerImageName = "pruebaTecnica:$version"
+                    def dockerImageName = "pruebaTecnica:v1.0"
 
                     // Construir la imagen usando Dockerfile en la carpeta actual
                     docker.build(dockerImageName, '.')
