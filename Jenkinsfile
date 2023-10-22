@@ -2,9 +2,9 @@ pipeline {
 
     agent any
 
-    /*environment {
+    environment {
         SONAR_SCANNER_HOME = tool name: 'SonarQube Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-    }*/
+    }
 
     // Etapas
     stages {
@@ -44,42 +44,36 @@ pipeline {
             }
         }
 
-        stage('SonarQube analysis') {
+        /*stage('SonarQube analysis') {
             steps {
 
                 withSonarQubeEnv('sonarQubePruebaTecnica') {
-                    sh 'sonar:sonar'
-                }
-
-                /*withSonarQubeEnv('sonarQubePruebaTecnica') {
                     // Aquí va el comando para realizar el análisis de SonarQube.
                     // Las propiedades de SonarQube se pasan mediante parámetros -D
                     sh 'mvn clean package sonar:sonar'
-                }*/
+                }
+            }
+        }*/
+
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    def scannerHome = tool 'SonarQube Scanner';
+                    withSonarQubeEnv('sonarQubePruebaTecnica') {
+                        sh """
+                            ${scannerHome}/bin/sonar-scanner \
+                            -Dsonar.projectKey=pruebaTecnica \
+                            -Dsonar.projectName='pruebaTecnica' \
+                            -Dsonar.sources=src \
+                            -Dsonar.exclusions=**/node_modules/** \
+                            -Dsonar.tests=src \
+                            -Dsonar.test.inclusions=**/*.spec.ts \
+                            -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
+                        """
+                    }
+                }
             }
         }
-
-        // stage('SonarQube Analysis') {
-        //     steps {
-        //         script {
-        //             def scannerHome = tool 'SonarQube Scanner';
-        //             withSonarQubeEnv('sonarQubePruebaTecnica') {
-        //                 sh """
-        //                     ${scannerHome}/bin/sonar-scanner \
-        //                     -Dsonar.projectKey=pruebaTecnica \
-        //                     -Dsonar.projectName='pruebaTecnica' \
-        //                     -Dsonar.sources=src \
-        //                     -Dsonar.exclusions=**/node_modules/** \
-        //                     -Dsonar.tests=src \
-        //                     -Dsonar.test.inclusions=**/*.spec.ts \
-        //                     -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
-        //                 """
-        //             }
-        //         }
-        //     }
-        // }
-
-
 
         stage('Wait for SonarQube to complete analysis') {
             steps {
