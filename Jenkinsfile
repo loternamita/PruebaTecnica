@@ -95,7 +95,7 @@ pipeline {
                     // }
 
                     // Utilizar credenciales almacenadas para iniciar sesión en Docker Hub
-                    withCredentials([usernamePassword(credentialsId: DOCKER_CERT_PATH, usernameVariable: username, passwordVariable: password)]) {
+                    withCredentials([usernamePassword(credentialsId: 'TokenDocker', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         // Iniciar sesión en Docker Hub
                         sh "docker login -u $username -p $password"
 
