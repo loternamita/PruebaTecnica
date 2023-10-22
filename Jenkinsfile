@@ -2,10 +2,10 @@ pipeline {
 
     agent any
 
-    /*tools {
-        sonarQubeEnv name: 'sonarQubePruebaTecnica'
-    }
-*/
+    /*environment {
+        SONAR_SCANNER_HOME = tool name: 'SonarQube Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+    }*/
+
     // Etapas
     stages {
 
@@ -46,23 +46,40 @@ pipeline {
 
         stage('SonarQube analysis') {
             steps {
+
                 withSonarQubeEnv('sonarQubePruebaTecnica') {
+                    sh 'sonar:sonar'
+                }
+
+                /*withSonarQubeEnv('sonarQubePruebaTecnica') {
                     // Aquí va el comando para realizar el análisis de SonarQube.
                     // Las propiedades de SonarQube se pasan mediante parámetros -D
                     sh 'mvn clean package sonar:sonar'
-                    sh '''
-                        sonarQube scanner \
-                            -Dsonar.projectKey=my-app \
-                            -Dsonar.sources=src \
-                            -Dsonar.exclusions=**/node_modules/** \
-                            -Dsonar.test.inclusions=**/*.spec.ts \
-                            -Dsonar.typescript.lcov.reportPaths=coverage/my-app/lcov.info \
-                            -Dsonar.host.url=http://localhost:9000 \
-                            -Dsonar.login=sqp_292289a50e9308062e41ca49d730de5885bbbbc0
-                    '''
-                }
+                }*/
             }
         }
+
+        // stage('SonarQube Analysis') {
+        //     steps {
+        //         script {
+        //             def scannerHome = tool 'SonarQube Scanner';
+        //             withSonarQubeEnv('sonarQubePruebaTecnica') {
+        //                 sh """
+        //                     ${scannerHome}/bin/sonar-scanner \
+        //                     -Dsonar.projectKey=pruebaTecnica \
+        //                     -Dsonar.projectName='pruebaTecnica' \
+        //                     -Dsonar.sources=src \
+        //                     -Dsonar.exclusions=**/node_modules/** \
+        //                     -Dsonar.tests=src \
+        //                     -Dsonar.test.inclusions=**/*.spec.ts \
+        //                     -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
+        //                 """
+        //             }
+        //         }
+        //     }
+        // }
+
+
 
         stage('Wait for SonarQube to complete analysis') {
             steps {
