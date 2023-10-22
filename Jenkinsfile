@@ -94,10 +94,17 @@ pipeline {
 
         stage('Build and Push Docker Image') {
             steps {
-                // Ahora puedes utilizar Docker en tu pipeline.
-                // Asegúrate de construir y subir tu imagen aquí.
-                sh "docker build -t ."
-                sh "docker push"
+
+                script {
+                    def currentBuildNumber = currentBuild.number
+                    def dockerImageName = "PruebaTecnica:v${currentBuildNumber}"
+
+                    // Construye la imagen Docker en el contexto actual
+                    sh "docker build -t ${dockerImageName} ."
+
+                    // Sube la imagen a un registro de Docker (por ejemplo, Docker Hub)
+                    sh "docker push ${dockerImageName}"
+                }
             }
         }
 
