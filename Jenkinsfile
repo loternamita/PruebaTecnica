@@ -97,7 +97,7 @@ pipeline {
 
                 script {
                     def currentBuildNumber = currentBuild.number
-                    def dockerImageName = "PruebaTecnica:v${currentBuildNumber}"
+                    def dockerImageName = "pruebatecnica:v${currentBuildNumber}"
 
                     // Construye la imagen Docker en el contexto actual
                     sh "docker build -t ${dockerImageName} ."
