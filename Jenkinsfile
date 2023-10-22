@@ -68,19 +68,46 @@ pipeline {
         // Este paso espera a que SonarQube complete el análisis y devuelve el resultado
         stage('Wait for SonarQube to complete analysis') {
             steps {
-
                 waitForQualityGate abortPipeline: true
             }
         }
 
-        // En esta parte se dockeriza el proyecto
+        // En esta parte se construye la imagen
         stage('Build Docker image') {
             steps {
                 script {
-                    docker.build("my-welcome-app:1.0.0")
+                    // Inicializa con la versión inicial
+                    def version = 'v1.0'
+
+                    // Aumenta la versión
+                    version = incrementVersion(version)
+
+                    // Nombre de la imagen que deseas crear
+                    def dockerImageName = "pruebaTecnica:$version"
+
+                    // Construir la imagen usando Dockerfile en la carpeta actual
+                    docker.build(dockerImageName, '.')
                 }
             }
         }
-        // ... cualquier otra etapa que necesites (despliegue, notificaciones, etc.)
+
+        /*stage('Push Docker image to Docker Hub') {
+            steps {
+                script {
+                    // Nombre de la imagen en Docker Hub
+                    def dockerHubImageName = 'tuusuario/mi-aplicacion:latest'
+
+                    // Autenticarse en Docker Hub (asegúrate de que las credenciales estén configuradas en Jenkins)
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+                        // Hacer push de la imagen
+                        docker.image(dockerImageName).push()
+                    }
+                }
+            }
+        }*/
+
+
+
+
     }
 }
