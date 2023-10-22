@@ -101,11 +101,11 @@ pipeline {
                         dockerImage.pull()
                     }
 
-                    // Construye la imagen Docker en el contexto actual
+                    /* Construye la imagen Docker en el contexto actual
                     sh "docker buildx build -t ${dockerImageName} ."
 
-                    // Sube la imagen a un registro de Docker (por ejemplo, Docker Hub)
-                    sh "docker push ${dockerImageName}"
+                     Sube la imagen a un registro de Docker (por ejemplo, Docker Hub)
+                    sh "docker push ${dockerImageName}"*/
                 }
 
             }
