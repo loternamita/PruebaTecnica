@@ -96,10 +96,10 @@ pipeline {
                     def currentBuildNumber = currentBuild.number
 
                     // Construye la imagen Docker en el contexto actual
-                    def appImage = docker.build("pruebatecnica:v${currentBuildNumber}")
+                    def appImage = docker.build("loternamita/pruebatecnica:v${currentBuildNumber}")
 
                     // Publica la imagen en docker Hub
-                    docker.withRegistry('https://registry.hub.docker.com', 'TokenDocker') {
+                    docker.withRegistry('https://index.docker.io/v1/', 'TokenDocker') {
                       appImage.push()
                     }
                 }
