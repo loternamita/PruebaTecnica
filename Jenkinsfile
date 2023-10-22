@@ -72,16 +72,18 @@ pipeline {
             }
         }
 
-        // Nombre de la imagen que deseas crear
-        def dockerImageName = "loternamita/PruebaTecnica:1.0"
-
         // Construir la imagen usando Dockerfile en la carpeta actual
         stage('Build Docker Image') {
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', 'TokenDocker') {
+
+                        // Nombre de la imagen que deseas crear
+                        def dockerImageName = "loternamita/PruebaTecnica:1.0"
+
                         // Construir la imagen y etiquetarla
                         def customImage = docker.build(dockerImageName, '.')
+                        
                         // Subir la imagen a Docker Hub
                         customImage.push()
                     }
