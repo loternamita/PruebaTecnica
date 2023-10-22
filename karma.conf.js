@@ -56,6 +56,13 @@ module.exports = function (config) {
       useBrowserName: false
     }*/
 
-    
+    customLaunchers: {
+      ChromeHeadlessNoSandbox: {
+        base: 'ChromeHeadless',
+        flags: ['--no-sandbox', '--disable-gpu', '--remote-debugging-port=9222']
+      }
+    }
+
+
   });
 };
