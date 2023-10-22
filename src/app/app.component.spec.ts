@@ -8,22 +8,19 @@ describe('AppComponent', () => {
     declarations: [AppComponent]
   }));
 
-  it('should create the app', () => {
+  it('should have the correct welcome message', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+    expect(app.mensajeBienvenida).toEqual('¡Bienvenido a mi aplicación Angular!');
   });
 
-  it(`should have as title 'my-app'`, () => {
+  it('should set the current date and time', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('my-app');
+    const now = new Date();
+    expect(app.fechaActual.getFullYear()).toBe(now.getFullYear());
+    expect(app.fechaActual.getMonth()).toBe(now.getMonth());
+    expect(app.fechaActual.getDate()).toBe(now.getDate());
   });
 
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('my-app app is running!');
-  });
 });

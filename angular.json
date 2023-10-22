@@ -25,7 +25,6 @@
               "src/assets"
             ],
             "styles": [
-              "src/assets/style/styles.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/bootstrap-icons/font/bootstrap-icons.css"
             ],
@@ -99,5 +98,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "f4e9a202-fbda-4a74-82c3-f33257c8529a"
   }
 }
