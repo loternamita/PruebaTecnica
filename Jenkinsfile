@@ -49,8 +49,9 @@ pipeline {
                 withSonarQubeEnv('sonarQubePruebaTecnica') {
                     // Aquí va el comando para realizar el análisis de SonarQube.
                     // Las propiedades de SonarQube se pasan mediante parámetros -D
+                    sh 'mvn clean package sonar:sonar'
                     sh '''
-                        sonar-scanner \
+                        sonarQube scanner \
                             -Dsonar.projectKey=my-app \
                             -Dsonar.sources=src \
                             -Dsonar.exclusions=**/node_modules/** \
