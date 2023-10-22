@@ -33,14 +33,21 @@ pipeline {
         }
 
         // En esta parte se instala las dependencias
-        stage('Install dependencies') {
+        /*stage('Install dependencies') {
             steps {
                 sh 'npm install'
             }
-        }
+        }*/
 
-        // En esta parte se ejecutan pruebas unitarias en Jasmine y Karma
-        stage('Run Unit tests') {
+        // En esta parte se instalan dependencias y ejecutan pruebas unitarias en Jasmine y Karma
+        stage('Install dependencies And Run Unit tests') {
+
+            agent {
+                docker {
+                    image 'node:14'
+                }
+            }
+
             steps {
                 script {
                   sh 'npm install'
@@ -94,21 +101,14 @@ pipeline {
                 script {
 
                     def currentBuildNumber = currentBuild.number
-                    def dockerImageName = "pruebatecnica:v${currentBuildNumber}"
 
                     // Construye la imagen Docker en el contexto actual
-                    sh "docker build -t ${dockerImageName} ."
+                    def appImage = docker.build("pruebatecnica:v${currentBuildNumber}")
 
+                    // Publica la imagen en docker Hub
                     docker.withRegistry('https://registry.hub.docker.com', 'TokenDocker') {
-                      // Sube la imagen a Docker Hub
-                      sh "docker push ${dockerImageName}"
+                      appImage.push()
                     }
-
-                    /* Construye la imagen Docker en el contexto actual
-                    sh "docker buildx build -t ${dockerImageName} ."
-
-                     Sube la imagen a un registro de Docker (por ejemplo, Docker Hub)
-                    sh "docker push ${dockerImageName}"*/
                 }
 
             }
