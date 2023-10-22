@@ -2,10 +2,10 @@ pipeline {
 
     agent any
 
-    tools {
+    /*tools {
         sonarQubeEnv name: 'sonarQubePruebaTecnica'
     }
-
+*/
     // Etapas
     stages {
 
