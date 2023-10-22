@@ -85,15 +85,23 @@ pipeline {
                     def currentBuildNumber = currentBuild.number
 
                     // Construye la imagen Docker en el contexto actual
-                    def appImage = docker.build("loternamita/pruebatecnica:v${currentBuildNumber}")
+                    //def appImage = docker.build("loternamita/pruebatecnica:v${currentBuildNumber}")
 
                     // Publica la imagen en docker Hub
-                    /*docker.withRegistry('https://index.docker.io/v1/', 'TokenDocker') {
-                      appImage.push()
-                    }*/
+                    // withDockerRegistry([credentialsId: 'TokenDocker', url: 'https://index.docker.io/v1/']) {
+                    //   appImage.push()
+                    // }
 
-                    withDockerRegistry([credentialsId: 'TokenDocker', url: 'https://index.docker.io/v1/']) {
-                      appImage.push()
+                    // Utilizar credenciales almacenadas para iniciar sesión en Docker Hub
+                    withCredentials([usernamePassword(credentialsId: 'TokenDocker', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        // Iniciar sesión en Docker Hub
+                        sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
+
+                        // Construir la imagen de Docker
+                        sh "docker build -t loternamita/pruebatecnica:v${currentBuildNumber} ."
+
+                        // Publicar la imagen en Docker Hub
+                        sh "docker push loternamita/pruebatecnica:v${currentBuildNumber}"
                     }
                 }
             }
