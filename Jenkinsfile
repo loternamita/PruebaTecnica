@@ -3,10 +3,6 @@ pipeline {
     agent any
 
     tools {
-        // a bit ugly because there is no `@Symbol` annotation for the DockerTool
-        // see the discussion about this in PR 77 and PR 52:
-        // https://github.com/jenkinsci/docker-commons-plugin/pull/77#discussion_r280910822
-        // https://github.com/jenkinsci/docker-commons-plugin/pull/52
         'org.jenkinsci.plugins.docker.commons.tools.DockerTool' 'Docker18.9'
     }
 
@@ -96,8 +92,14 @@ pipeline {
             steps {
 
                 script {
+
                     def currentBuildNumber = currentBuild.number
                     def dockerImageName = "pruebatecnica:v${currentBuildNumber}"
+
+                    docker.withRegistry('https://registry.hub.docker.com', 'TokenDocker') {
+                        def dockerImage = docker.image(dockerImageName)
+                        dockerImage.pull()
+                    }
 
                     // Construye la imagen Docker en el contexto actual
                     sh "docker buildx build -t ${dockerImageName} ."
@@ -105,6 +107,7 @@ pipeline {
                     // Sube la imagen a un registro de Docker (por ejemplo, Docker Hub)
                     sh "docker push ${dockerImageName}"
                 }
+
             }
         }
 
