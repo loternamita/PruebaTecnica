@@ -2,12 +2,6 @@ pipeline {
 
     agent any
 
-    // Herramientas para poder ejecutar el archivo JenkinsFile
-    tools {
-        // Especifica la versión de sonar-scanner que se ha configurado en Jenkins
-        sonarQubeEnv 'sonarQubePruebaTecnica'
-    }
-
     // Etapas
     stages {
 
