@@ -92,7 +92,10 @@ pipeline {
                       appImage.push()
                     }
                 }
-            } 
+            }
         }
+
+
+        
     }
 }
