@@ -2,6 +2,10 @@ pipeline {
 
     agent any
 
+    tools {
+        sonarQubeScanner 'sonarQubePruebaTecnica'
+    }
+
     // Etapas
     stages {
 
