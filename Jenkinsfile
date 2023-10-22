@@ -41,13 +41,6 @@ pipeline {
 
         // En esta parte se instalan dependencias y ejecutan pruebas unitarias en Jasmine y Karma
         stage('Install dependencies And Run Unit tests') {
-
-            agent {
-                docker {
-                    image 'node:14'
-                }
-            }
-
             steps {
                 script {
                   sh 'npm install'
