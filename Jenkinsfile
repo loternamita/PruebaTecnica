@@ -83,6 +83,8 @@ pipeline {
                 script {
 
                     def currentBuildNumber = currentBuild.number
+                    def username = 'loternamita'
+                    def password = DOCKER_CERT_PATH
 
                     // Construye la imagen Docker en el contexto actual
                     //def appImage = docker.build("loternamita/pruebatecnica:v${currentBuildNumber}")
@@ -93,9 +95,9 @@ pipeline {
                     // }
 
                     // Utilizar credenciales almacenadas para iniciar sesión en Docker Hub
-                    withCredentials([usernamePassword(credentialsId: 'TokenDocker', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    withCredentials([usernamePassword(credentialsId: DOCKER_CERT_PATH, usernameVariable: username, passwordVariable: password)]) {
                         // Iniciar sesión en Docker Hub
-                        sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
+                        sh "docker login -u $username -p $password"
 
                         // Construir la imagen de Docker
                         sh "docker build -t loternamita/pruebatecnica:v${currentBuildNumber} ."
