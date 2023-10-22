@@ -2,10 +2,12 @@ pipeline {
 
     agent any
 
+    // Dependencias que necesitamos
     tools {
         'org.jenkinsci.plugins.docker.commons.tools.DockerTool' 'Docker18.9'
     }
 
+    // Variables de entorno extraidas del servidor de jenkins
     environment {
         SONAR_SCANNER_HOME = tool name: 'SonarQube Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
         DOCKER_CERT_PATH = credentials('TokenDocker')
@@ -31,13 +33,6 @@ pipeline {
                   )
             }
         }
-
-        // En esta parte se instala las dependencias
-        /*stage('Install dependencies') {
-            steps {
-                sh 'npm install'
-            }
-        }*/
 
         // En esta parte se instalan dependencias y ejecutan pruebas unitarias en Jasmine y Karma
         stage('Install dependencies And Run Unit tests') {
@@ -77,17 +72,7 @@ pipeline {
             }
         }
 
-
-
-
-
-
-
-
-
-
-
-
+        // Construimos la imagen y la publicamos en dockerHub
         stage('Build and Push Docker Image') {
             steps {
 
@@ -103,17 +88,7 @@ pipeline {
                       appImage.push()
                     }
                 }
-
             }
         }
-
-
-
-
-
-
-
-
-
     }
 }
