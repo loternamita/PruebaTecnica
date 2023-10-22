@@ -72,35 +72,22 @@ pipeline {
             }
         }
 
-        // En esta parte se construye la imagen
-        stage('Build Docker image') {
+        // Nombre de la imagen que deseas crear
+        def dockerImageName = "loternamita/PruebaTecnica:1.0"
+
+        // Construir la imagen usando Dockerfile en la carpeta actual
+        stage('Build Docker Image') {
             steps {
                 script {
-                    // Nombre de la imagen que deseas crear
-                    def dockerImageName = "pruebaTecnica:v1.0"
-
-                    // Construir la imagen usando Dockerfile en la carpeta actual
-                    docker.build(dockerImageName, '.')
-                }
-            }
-        }
-
-        /*stage('Push Docker image to Docker Hub') {
-            steps {
-                script {
-                    // Nombre de la imagen en Docker Hub
-                    def dockerHubImageName = 'tuusuario/mi-aplicacion:latest'
-
-                    // Autenticarse en Docker Hub (asegúrate de que las credenciales estén configuradas en Jenkins)
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                        // Hacer push de la imagen
-                        docker.image(dockerImageName).push()
+                    docker.withRegistry('https://registry.hub.docker.com', 'TokenDocker') {
+                        // Construir la imagen y etiquetarla
+                        def customImage = docker.build(dockerImageName, '.')
+                        // Subir la imagen a Docker Hub
+                        customImage.push()
                     }
                 }
             }
-        }*/
-
-
+        }
 
 
     }
