@@ -88,7 +88,11 @@ pipeline {
                     def appImage = docker.build("loternamita/pruebatecnica:v${currentBuildNumber}")
 
                     // Publica la imagen en docker Hub
-                    docker.withRegistry('https://index.docker.io/v1/', 'TokenDocker') {
+                    /*docker.withRegistry('https://index.docker.io/v1/', 'TokenDocker') {
+                      appImage.push()
+                    }*/
+
+                    withDockerRegistry([credentialsId: 'TokenDocker', url: 'https://index.docker.io/v1/']) {
                       appImage.push()
                     }
                 }
