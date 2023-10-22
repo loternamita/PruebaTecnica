@@ -100,7 +100,7 @@ pipeline {
                     def dockerImageName = "pruebatecnica:v${currentBuildNumber}"
 
                     // Construye la imagen Docker en el contexto actual
-                    sh "docker buildx build -t ${dockerImageName} ."
+                    sh "docker build -t ${dockerImageName} ."
 
                     // Sube la imagen a un registro de Docker (por ejemplo, Docker Hub)
                     sh "docker push ${dockerImageName}"
