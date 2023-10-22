@@ -3,7 +3,7 @@ pipeline {
     agent any
 
     tools {
-        sonarQubeScanner 'sonarQubePruebaTecnica'
+        sonar-scanner 'sonarQubePruebaTecnica'
     }
 
     // Etapas
