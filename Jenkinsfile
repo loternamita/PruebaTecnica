@@ -96,9 +96,12 @@ pipeline {
                     def currentBuildNumber = currentBuild.number
                     def dockerImageName = "pruebatecnica:v${currentBuildNumber}"
 
+                    // Construye la imagen Docker en el contexto actual
+                    sh "docker build -t ${dockerImageName} ."
+
                     docker.withRegistry('https://registry.hub.docker.com', 'TokenDocker') {
-                        def dockerImage = docker.image(dockerImageName)
-                        dockerImage.pull()
+                      // Sube la imagen a Docker Hub
+                      sh "docker push ${dockerImageName}"
                     }
 
                     /* Construye la imagen Docker en el contexto actual
