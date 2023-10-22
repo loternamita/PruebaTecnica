@@ -44,7 +44,7 @@ pipeline {
             steps {
                 script {
                   sh 'npm install'
-                  sh 'ng test --watch=false --browsers=ChromeHeadless'
+                  sh 'ng test --watch=false'
                 }
             }
         }
