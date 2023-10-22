@@ -98,7 +98,7 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'TokenDocker', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
 
                         // Iniciar sesión en Docker Hub sin usar 'pass'
-                        sh "docker login -u $DOCKER_USERNAME --password-stdin $DOCKER_PASSWORD"
+                        sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
 
                         // Construir la imagen de Docker
                         sh "docker build -t loternamita/pruebatecnica:v${currentBuildNumber} ."
