@@ -44,17 +44,7 @@ pipeline {
             }
         }
 
-        /*stage('SonarQube analysis') {
-            steps {
-
-                withSonarQubeEnv('sonarQubePruebaTecnica') {
-                    // Aquí va el comando para realizar el análisis de SonarQube.
-                    // Las propiedades de SonarQube se pasan mediante parámetros -D
-                    sh 'mvn clean package sonar:sonar'
-                }
-            }
-        }*/
-
+        // Configura Sonar con requisitos especificos que se requieran
         stage('SonarQube Analysis') {
             steps {
                 script {
@@ -67,7 +57,7 @@ pipeline {
                             -Dsonar.sources=src \
                             -Dsonar.exclusions=**/node_modules/** \
                             -Dsonar.tests=src \
-                            -Dsonar.test.inclusions=**/*.spec.ts \
+                            -Dsonar.test.inclusions=**/*.spec.ts, **/*spec.ts, **/*.test.ts \
                             -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
                         """
                     }
@@ -75,9 +65,10 @@ pipeline {
             }
         }
 
+        // Este paso espera a que SonarQube complete el análisis y devuelve el resultado
         stage('Wait for SonarQube to complete analysis') {
             steps {
-                // Este paso espera a que SonarQube complete el análisis y devuelve el resultado
+
                 waitForQualityGate abortPipeline: true
             }
         }
