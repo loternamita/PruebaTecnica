@@ -48,7 +48,7 @@ pipeline {
 
         stage('SonarQube analysis') {
             steps {
-                withSonarQubeEnv(sonarQubeEnv) {
+                withSonarQubeEnv('sonarQubePruebaTecnica') {
                     // Aquí va el comando para realizar el análisis de SonarQube.
                     // Las propiedades de SonarQube se pasan mediante parámetros -D
                     sh '''
