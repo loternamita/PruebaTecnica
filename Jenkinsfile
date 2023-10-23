@@ -2,10 +2,12 @@ pipeline {
 
     agent any
 
+    // Dependencias que necesitamos
     tools {
         'org.jenkinsci.plugins.docker.commons.tools.DockerTool' 'Docker18.9'
     }
 
+    // Variables de entorno extraidas del servidor de jenkins
     environment {
         SONAR_SCANNER_HOME = tool name: 'SonarQube Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
         DOCKER_CERT_PATH = credentials('TokenDocker')
@@ -14,14 +16,10 @@ pipeline {
     // Etapas
     stages {
 
-        // Validar el pipeline
+        // Validar acceso al repositorio
         stage('Checkout') {
             steps {
-                git(
-                      credentialsId: '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',
-                      url: 'https://github.com/loternamita/PruebaTecnica.git',
-                      branch: 'develop'
-                  )
+                checkout scm
             }
         }
 
@@ -29,26 +27,24 @@ pipeline {
         stage('Clone repository') {
             steps {
                 git(
-                      credentialsId: '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',
-                      url: 'https://github.com/loternamita/PruebaTecnica.git',
-                      branch: 'develop'
+                      credentialsId: 'TokenGitHub-Jenkins',
+                      url: "${REPO_URL}",
+                      branch: "${BRANCH}"
                   )
             }
         }
-
-        // En esta parte se instala las dependencias
-        /*stage('Install dependencies') {
-            steps {
-                sh 'npm install'
-            }
-        }*/
 
         // En esta parte se instalan dependencias y ejecutan pruebas unitarias en Jasmine y Karma
         stage('Install dependencies And Run Unit tests') {
             steps {
                 script {
-                  sh 'npm install'
-                  sh 'ng test --watch=false'
+                  try {
+                    sh 'npm ci'
+                    sh 'ng test --watch=false --browsers=ChromeHeadless'
+                  } catch (Exception e) {
+                    echo "Hubo un error durante la ejecución de las pruebas unitarias: ${e.getMessage()}"
+                    currentBuild.result = 'FAILURE'
+                  }
                 }
             }
         }
@@ -81,17 +77,7 @@ pipeline {
             }
         }
 
-
-
-
-
-
-
-
-
-
-
-
+        // Construimos la imagen y la publicamos en dockerHub
         stage('Build and Push Docker Image') {
             steps {
 
@@ -99,25 +85,28 @@ pipeline {
 
                     def currentBuildNumber = currentBuild.number
 
-                    // Construye la imagen Docker en el contexto actual
-                    def appImage = docker.build("loternamita/pruebatecnica:v${currentBuildNumber}")
+                    //Construye la imagen Docker en el contexto actual
+                    def appImage = docker.build("${UsernameDocker}/pruebatecnica:v${currentBuildNumber}")
 
-                    // Publica la imagen en docker Hub
-                    docker.withRegistry('https://index.docker.io/v1/', 'TokenDocker') {
+                    //Publica la imagen en docker Hub
+                    withDockerRegistry([credentialsId: 'TokenDocker', url: 'https://index.docker.io/v1/']) {
                       appImage.push()
                     }
                 }
-
             }
         }
+    }
 
-
-
-
-
-
-
-
-
+    post {
+      always {
+        echo 'Limpiando el entorno de trabajo...'
+        cleanWs()
+      }
+      success {
+        echo 'La pipeline fue exitosa. Enviando notificación de éxito...'
+      }
+      failure {
+        echo 'La pipeline falló. Enviando notificación de fallo...'
+      }
     }
 }
