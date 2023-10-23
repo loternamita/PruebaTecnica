@@ -19,7 +19,10 @@ pipeline {
         // Validar acceso al repositorio
         stage('Checkout') {
             steps {
-                checkout scm
+                script {
+                  echo 'Ingreso al JenkinsFile Exitosamente'
+                }
+                //checkout scm
             }
         }
 
