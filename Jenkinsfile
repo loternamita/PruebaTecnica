@@ -80,6 +80,7 @@ pipeline {
         stage('Docker Build') {
           steps {
             script {
+              def currentBuildNumber = currentBuild.number
               sh "docker build -t ${UsernameDocker}/pruebatecnica:v${currentBuildNumber} . "
             }
           }
@@ -88,6 +89,7 @@ pipeline {
         stage('Docker Push') {
           steps {
             script {
+              def currentBuildNumber = currentBuild.number
       	      withCredentials([usernamePassword(credentialsId: 'TokenDocker', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
         	      sh "docker login -u ${dockerHubUser} -p ${dockerHubPassword}"
                 sh "docker push ${UsernameDocker}/pruebatecnica:v${currentBuildNumber}"
