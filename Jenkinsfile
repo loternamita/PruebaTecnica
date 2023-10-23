@@ -79,15 +79,19 @@ pipeline {
 
         stage('Docker Build') {
           steps {
-      	    sh "docker build -t ${UsernameDocker}/pruebatecnica:v${currentBuildNumber} . "
+            script {
+              sh "docker build -t ${UsernameDocker}/pruebatecnica:v${currentBuildNumber} . "
+            }
           }
         }
 
         stage('Docker Push') {
           steps {
-      	    withCredentials([usernamePassword(credentialsId: 'TokenDocker', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
-        	    sh "docker login -u ${dockerHubUser} -p ${dockerHubPassword}"
-              sh "docker push ${UsernameDocker}/pruebatecnica:v${currentBuildNumber}"
+            script {
+      	      withCredentials([usernamePassword(credentialsId: 'TokenDocker', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+        	      sh "docker login -u ${dockerHubUser} -p ${dockerHubPassword}"
+                sh "docker push ${UsernameDocker}/pruebatecnica:v${currentBuildNumber}"
+              }
             }
           }
         }
