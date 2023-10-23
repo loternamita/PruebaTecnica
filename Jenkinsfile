@@ -45,8 +45,8 @@ pipeline {
                     echo "Hubo un error durante la ejecución de las pruebas unitarias: ${e.getMessage()}"
                     currentBuild.result = 'FAILURE'
                   }
-                }
-            }
+                 }
+             }
         }
 
         // Configura Sonar con requisitos especificos que se requieran
