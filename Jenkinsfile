@@ -77,8 +77,23 @@ pipeline {
             }
         }
 
+        stage('Docker Build') {
+          steps {
+      	    sh "docker build -t ${UsernameDocker}/pruebatecnica:v${currentBuildNumber} . "
+          }
+        }
+
+        stage('Docker Push') {
+          steps {
+      	    withCredentials([usernamePassword(credentialsId: 'TokenDocker', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+        	    sh "docker login -u ${dockerHubUser} -p ${dockerHubPassword}"
+              sh "docker push ${UsernameDocker}/pruebatecnica:v${currentBuildNumber}"
+            }
+          }
+        }
+
         // Construimos la imagen y la publicamos en dockerHub
-        stage('Build and Push Docker Image') {
+        /*stage('Build and Push Docker Image') {
             steps {
 
                 script {
@@ -94,7 +109,7 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
     }
 
     post {
