@@ -16,14 +16,10 @@ pipeline {
     // Etapas
     stages {
 
-        // Validar el pipeline
+        // Validar acceso al repositorio
         stage('Checkout') {
             steps {
-                git(
-                      credentialsId: 'TokenGitHub-Jenkins',
-                      url: "${REPO_URL}",
-                      branch: "${BRANCH}"
-                  )
+                checkout scm
             }
         }
 
@@ -42,8 +38,13 @@ pipeline {
         stage('Install dependencies And Run Unit tests') {
             steps {
                 script {
-                  sh 'npm install'
-                  sh 'ng test --watch=false --browsers=ChromeHeadless'
+                  try {
+                    sh 'npm ci'
+                    sh 'ng test --watch=false --browsers=ChromeHeadless'
+                  } catch (Exception e) {
+                    echo "Hubo un error durante la ejecución de las pruebas unitarias: ${e.getMessage()}"
+                    currentBuild.result = 'FAILURE'
+                  }
                 }
             }
         }
@@ -85,7 +86,7 @@ pipeline {
                     def currentBuildNumber = currentBuild.number
 
                     //Construye la imagen Docker en el contexto actual
-                    def appImage = docker.build("loternamita/pruebatecnica:v${currentBuildNumber}")
+                    def appImage = docker.build("${UsernameDocker}/pruebatecnica:v${currentBuildNumber}")
 
                     //Publica la imagen en docker Hub
                     withDockerRegistry([credentialsId: 'TokenDocker', url: 'https://index.docker.io/v1/']) {
@@ -94,5 +95,18 @@ pipeline {
                 }
             }
         }
+    }
+
+    post {
+      always {
+        echo 'Limpiando el entorno de trabajo...'
+        cleanWs()
+      }
+      success {
+        echo 'La pipeline fue exitosa. Enviando notificación de éxito...'
+      }
+      failure {
+        echo 'La pipeline falló. Enviando notificación de fallo...'
+      }
     }
 }
