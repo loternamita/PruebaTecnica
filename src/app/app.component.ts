@@ -11,5 +11,5 @@ export class AppComponent {
   valorNuevo = 'Hola mundooooo';
   mensajeBienvenida = '¡Bienvenido a mi aplicación Angular!';
   fechaActual = new Date();
-  valorNuevo20 = '14.0';
+  valorNuevo20 = '15.0';
 }
