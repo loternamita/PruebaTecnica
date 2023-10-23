@@ -1,17 +1,17 @@
 pipeline {
 
-    agent any
+    //agent any
 
     // Dependencias que necesitamos
-    tools {
-        'org.jenkinsci.plugins.docker.commons.tools.DockerTool' 'Docker18.9'
-    }
+    // tools {
+    //     'org.jenkinsci.plugins.docker.commons.tools.DockerTool' 'Docker18.9'
+    // }
 
     // Variables de entorno extraidas del servidor de jenkins
-    environment {
-        SONAR_SCANNER_HOME = tool name: 'SonarQube Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-        DOCKER_CERT_PATH = credentials('TokenDocker')
-    }
+    // environment {
+    //     SONAR_SCANNER_HOME = tool name: 'SonarQube Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+    //     DOCKER_CERT_PATH = credentials('TokenDocker')
+    // }
 
     // Etapas
     stages {
@@ -24,77 +24,77 @@ pipeline {
         }
 
         // En esta parte se clona el repositorio en el servidor de jenkins
-        stage('Clone repository') {
-            steps {
-                git(
-                      credentialsId: 'TokenGitHub-Jenkins',
-                      url: "${REPO_URL}",
-                      branch: "${BRANCH}"
-                  )
-            }
-        }
+        // stage('Clone repository') {
+        //     steps {
+        //         git(
+        //               credentialsId: 'TokenGitHub-Jenkins',
+        //               url: "${REPO_URL}",
+        //               branch: "${BRANCH}"
+        //           )
+        //     }
+        // }
 
         // En esta parte se instalan dependencias y ejecutan pruebas unitarias en Jasmine y Karma
-        stage('Install dependencies And Run Unit tests') {
-            steps {
-                script {
-                  try {
-                    sh 'npm ci'
-                    sh 'ng test --watch=false --browsers=ChromeHeadless'
-                  } catch (Exception e) {
-                    echo "Hubo un error durante la ejecución de las pruebas unitarias: ${e.getMessage()}"
-                    currentBuild.result = 'FAILURE'
-                  }
-                }
-            }
-        }
+        // stage('Install dependencies And Run Unit tests') {
+        //     steps {
+        //         script {
+        //           try {
+        //             sh 'npm ci'
+        //             sh 'ng test --watch=false --browsers=ChromeHeadless'
+        //           } catch (Exception e) {
+        //             echo "Hubo un error durante la ejecución de las pruebas unitarias: ${e.getMessage()}"
+        //             currentBuild.result = 'FAILURE'
+        //           }
+        //         }
+        //     }
+        // }
 
         // Configura Sonar con requisitos especificos que se requieran
-        stage('SonarQube Analysis') {
-            steps {
-                script {
-                    def scannerHome = tool 'SonarQube Scanner';
-                    withSonarQubeEnv('sonarQubePruebaTecnica') {
-                        sh """
-                            ${scannerHome}/bin/sonar-scanner \
-                            -Dsonar.projectKey=pruebaTecnica \
-                            -Dsonar.projectName='pruebaTecnica' \
-                            -Dsonar.sources=src \
-                            -Dsonar.exclusions=**/node_modules/** \
-                            -Dsonar.tests=src \
-                            -Dsonar.test.inclusions=**/*.spec.ts,**/*.test.ts,**/*spec.ts \
-                            -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
-                        """
-                    }
-                }
-            }
-        }
+        // stage('SonarQube Analysis') {
+        //     steps {
+        //         script {
+        //             def scannerHome = tool 'SonarQube Scanner';
+        //             withSonarQubeEnv('sonarQubePruebaTecnica') {
+        //                 sh """
+        //                     ${scannerHome}/bin/sonar-scanner \
+        //                     -Dsonar.projectKey=pruebaTecnica \
+        //                     -Dsonar.projectName='pruebaTecnica' \
+        //                     -Dsonar.sources=src \
+        //                     -Dsonar.exclusions=**/node_modules/** \
+        //                     -Dsonar.tests=src \
+        //                     -Dsonar.test.inclusions=**/*.spec.ts,**/*.test.ts,**/*spec.ts \
+        //                     -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
+        //                 """
+        //             }
+        //         }
+        //     }
+        // }
 
         // Este paso espera a que SonarQube complete el análisis y devuelve el resultado
-        stage('Wait for SonarQube to complete analysis') {
-            steps {
-                waitForQualityGate abortPipeline: true
-            }
-        }
+        // stage('Wait for SonarQube to complete analysis') {
+        //     steps {
+        //         waitForQualityGate abortPipeline: true
+        //     }
+        // }
 
         // Construimos la imagen y la publicamos en dockerHub
-        stage('Build and Push Docker Image') {
-            steps {
+        // stage('Build and Push Docker Image') {
+        //     steps {
 
-                script {
+        //         script {
 
-                    def currentBuildNumber = currentBuild.number
+        //             def currentBuildNumber = currentBuild.number
 
-                    //Construye la imagen Docker en el contexto actual
-                    def appImage = docker.build("${UsernameDocker}/pruebatecnica:v${currentBuildNumber}")
+        //             //Construye la imagen Docker en el contexto actual
+        //             def appImage = docker.build("${UsernameDocker}/pruebatecnica:v${currentBuildNumber}")
 
-                    //Publica la imagen en docker Hub
-                    withDockerRegistry([credentialsId: 'TokenDocker', url: 'https://index.docker.io/v1/']) {
-                      appImage.push()
-                    }
-                }
-            }
-        }
+        //             //Publica la imagen en docker Hub
+        //             withDockerRegistry([credentialsId: 'TokenDocker', url: 'https://index.docker.io/v1/']) {
+        //               appImage.push()
+        //             }
+        //         }
+        //     }
+        // }
     }
 
     post {
