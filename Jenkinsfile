@@ -78,42 +78,29 @@ pipeline {
         // }
 
 
-        stage('Docker compile'){
+
+
+
+        stage('Docker Build') {
           steps {
-            script{
-              docker.withRegistry('https://index.docker.io/v1/', 'TokenDocker') {
-
-                def currentBuildNumber = currentBuild.number
-                def customImage = docker.build("${UsernameDocker}/pruebatecnica:${currentBuildNumber}")
-
-                /* Push the container to the custom Registry */
-                customImage.push()
-              }
+            script {
+              def currentBuildNumber = currentBuild.number
+              sh "docker build -t ${UsernameDocker}/pruebatecnica:v${currentBuildNumber} . "
             }
           }
         }
 
-
-        // stage('Docker Build') {
-        //   steps {
-        //     script {
-        //       def currentBuildNumber = currentBuild.number
-        //       sh "docker build -t ${UsernameDocker}/pruebatecnica:v${currentBuildNumber} . "
-        //     }
-        //   }
-        // }
-
-        // stage('Docker Push') {
-        //   steps {
-        //     script {
-        //       def currentBuildNumber = currentBuild.number
-      	//       withCredentials([usernamePassword(credentialsId: 'TokenDocker', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
-        // 	      sh "docker login -u ${dockerHubUser} -p ${dockerHubPassword}"
-        //         sh "docker push ${UsernameDocker}/pruebatecnica:v${currentBuildNumber}"
-        //       }
-        //     }
-        //   }
-        // }
+        stage('Docker Push') {
+          steps {
+            script {
+              def currentBuildNumber = currentBuild.number
+      	      withCredentials([usernamePassword(credentialsId: 'TokenDocker', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+        	      sh "docker login -u ${dockerHubUser}"
+                sh "docker push ${UsernameDocker}/pruebatecnica:v${currentBuildNumber}"
+              }
+            }
+          }
+        }
 
         // Construimos la imagen y la publicamos en dockerHub
         /*stage('Build and Push Docker Image') {
