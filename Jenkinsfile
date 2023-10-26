@@ -95,7 +95,7 @@ pipeline {
             script {
               def currentBuildNumber = currentBuild.number
       	      withCredentials([usernamePassword(credentialsId: 'TokenDocker', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
-        	      sh "docker login -u ${dockerHubUser}"
+        	      sh "docker login -u ${dockerHubUser} -p ${dockerHubPassword}"
                 sh "docker push ${UsernameDocker}/pruebatecnica:v${currentBuildNumber}"
               }
             }
