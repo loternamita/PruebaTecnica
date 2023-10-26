@@ -81,7 +81,7 @@ pipeline {
 
 
 
-        stage('Docker Build') {
+        /*stage('Docker Build') {
           steps {
             script {
               // Autenticación con Docker Hub antes de construir la imagen
@@ -102,10 +102,10 @@ pipeline {
               sh "docker push ${UsernameDocker}/pruebatecnica:v${currentBuildNumber}"
             }
           }
-        }
+        }*/
 
         // Construimos la imagen y la publicamos en dockerHub
-        /*stage('Build and Push Docker Image') {
+        stage('Build and Push Docker Image') {
             steps {
 
                 script {
@@ -121,7 +121,7 @@ pipeline {
                     }
                 }
             }
-        }*/
+        }
     }
 
     post {
