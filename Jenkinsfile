@@ -84,6 +84,11 @@ pipeline {
         stage('Docker Build') {
           steps {
             script {
+              // Autenticación con Docker Hub antes de construir la imagen
+              withCredentials([usernamePassword(credentialsId: 'TokenDocker', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+                sh "docker login -u ${dockerHubUser} -p ${dockerHubPassword}"
+              }
+
               def currentBuildNumber = currentBuild.number
               sh "docker build -t ${UsernameDocker}/pruebatecnica:v${currentBuildNumber} . "
             }
@@ -94,10 +99,7 @@ pipeline {
           steps {
             script {
               def currentBuildNumber = currentBuild.number
-      	      withCredentials([usernamePassword(credentialsId: 'TokenDocker', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
-        	      sh "docker login -u ${dockerHubUser} -p ${dockerHubPassword}"
-                sh "docker push ${UsernameDocker}/pruebatecnica:v${currentBuildNumber}"
-              }
+              sh "docker push ${UsernameDocker}/pruebatecnica:v${currentBuildNumber}"
             }
           }
         }
