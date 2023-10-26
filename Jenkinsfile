@@ -86,12 +86,10 @@ pipeline {
           steps {
             script {
 
-
-              echo $DOCKER_PASSWORD
-
               // Autenticación con Docker Hub antes de construir la imagen
               withCredentials([usernamePassword(credentialsId: 'TokenDocker', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-                sh 'echo  | docker login -u $DOCKER_USERNAME --password-stdin'
+                echo $DOCKER_PASSWORD
+                sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
               }
 
               def currentBuildNumber = currentBuild.number
