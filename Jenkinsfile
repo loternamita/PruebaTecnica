@@ -85,14 +85,13 @@ pipeline {
         stage('Docker Build') {
           steps {
             script {
-
               // Autenticación con Docker Hub antes de construir la imagen
               withCredentials([usernamePassword(credentialsId: 'TokenDocker', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                 sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
               }
 
               def currentBuildNumber = currentBuild.number
-              sh 'docker build -t $UsernameDocker/pruebatecnica:v$currentBuildNumber . '
+              sh "docker build -t loternamita/pruebatecnica:v${currentBuildNumber} ."
             }
           }
         }
@@ -101,7 +100,7 @@ pipeline {
           steps {
             script {
               def currentBuildNumber = currentBuild.number
-              sh 'docker push $UsernameDocker/pruebatecnica:v$currentBuildNumber'
+              sh "docker push loternamita/pruebatecnica:v${currentBuildNumber}"
             }
           }
         }
