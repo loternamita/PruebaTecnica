@@ -78,10 +78,6 @@ pipeline {
         //     }
         // }
 
-
-
-
-
         stage('Docker Build') {
           steps {
             script {
@@ -91,7 +87,7 @@ pipeline {
               }
 
               def currentBuildNumber = currentBuild.number
-              sh 'docker build -t loternamita/pruebatecnica:v1 .'
+              sh "docker build -t loternamita/pruebatecnica:v${currentBuildNumber} ."
             }
           }
         }
@@ -100,7 +96,7 @@ pipeline {
           steps {
             script {
               def currentBuildNumber = currentBuild.number
-              sh 'docker push loternamita/pruebatecnica:v1'
+              sh "docker push loternamita/pruebatecnica:v${currentBuildNumber}"
             }
           }
         }
