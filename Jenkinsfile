@@ -11,6 +11,7 @@ pipeline {
     environment {
         SONAR_SCANNER_HOME = tool name: 'SonarQube Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
         DOCKER_CERT_PATH = credentials('TokenDocker')
+        DOCKER_HUB_CREDENTIALS = credentials('TokenDocker')
     }
 
     // Etapas
@@ -86,7 +87,7 @@ pipeline {
             script {
               // Autenticación con Docker Hub antes de construir la imagen
               withCredentials([usernamePassword(credentialsId: 'TokenDocker', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
-                sh "echo \"${dockerHubPassword}\" | docker login -u \"${dockerHubUser}\" --password-stdin"
+                sh "echo ${DOCKER_HUB_CREDENTIALS} | docker login -u ${dockerHubUser} --password-stdin"
               }
 
               def currentBuildNumber = currentBuild.number
@@ -137,3 +138,4 @@ pipeline {
       }
     }
 }
+DOCKER_HUB_CREDENTIALS
